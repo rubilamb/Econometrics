@@ -6,3 +6,4 @@ output/*.csv
 output/*.txt
 *.egg-info/
 .ipynb_checkpoints/
+*.pdf
