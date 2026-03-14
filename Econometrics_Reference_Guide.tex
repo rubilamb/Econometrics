@@ -1,0 +1,1311 @@
+\documentclass[10pt,a4paper]{article}
+
+% ── Packages ──────────────────────────────────────────────────────────────────
+\usepackage[top=1.8cm,bottom=1.8cm,left=1.6cm,right=1.6cm]{geometry}
+\usepackage{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb}
+\usepackage{multicol}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{mdframed}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{makecell}
+
+% ── Colors ────────────────────────────────────────────────────────────────────
+\definecolor{NavyBlue}{RGB}{25,55,110}
+\definecolor{DarkBlue}{RGB}{10,40,90}
+\definecolor{LightBlue}{RGB}{220,232,247}
+\definecolor{MedBlue}{RGB}{180,210,240}
+\definecolor{GreenTeal}{RGB}{0,110,90}
+\definecolor{LightGreen}{RGB}{220,245,235}
+\definecolor{WarnRed}{RGB}{160,30,30}
+\definecolor{LightRed}{RGB}{250,225,225}
+\definecolor{AmberOrange}{RGB}{180,90,0}
+\definecolor{LightAmber}{RGB}{255,240,210}
+\definecolor{PurpleDeep}{RGB}{80,0,120}
+\definecolor{LightPurple}{RGB}{240,225,255}
+\definecolor{RowGray}{RGB}{245,245,248}
+\definecolor{HeaderGray}{RGB}{60,60,75}
+
+% ── tcolorbox styles ──────────────────────────────────────────────────────────
+\tcbuselibrary{skins,breakable}
+\tcbset{
+  when/.style={
+    colback=LightBlue, colframe=NavyBlue, coltitle=white,
+    fonttitle=\bfseries\small, title={When to Use},
+    breakable, left=4pt, right=4pt, top=3pt, bottom=3pt,
+    arc=2pt, boxrule=0.8pt
+  },
+  tests/.style={
+    colback=LightGreen, colframe=GreenTeal, coltitle=white,
+    fonttitle=\bfseries\small, title={Diagnostic Tests \& Decision Rules},
+    breakable, left=4pt, right=4pt, top=3pt, bottom=3pt,
+    arc=2pt, boxrule=0.8pt
+  },
+  watchout/.style={
+    colback=LightRed, colframe=WarnRed, coltitle=white,
+    fonttitle=\bfseries\small, title={Watch Out For},
+    breakable, left=4pt, right=4pt, top=3pt, bottom=3pt,
+    arc=2pt, boxrule=0.8pt
+  },
+  checklist/.style={
+    colback=LightAmber, colframe=AmberOrange, coltitle=white,
+    fonttitle=\bfseries\small, title={Researcher Checklist},
+    breakable, left=4pt, right=4pt, top=3pt, bottom=3pt,
+    arc=2pt, boxrule=0.8pt
+  },
+  key/.style={
+    colback=LightPurple, colframe=PurpleDeep, coltitle=white,
+    fonttitle=\bfseries\small, title={Key Formula / Estimator},
+    breakable, left=4pt, right=4pt, top=3pt, bottom=3pt,
+    arc=2pt, boxrule=0.8pt
+  }
+}
+
+% ── Section styles ────────────────────────────────────────────────────────────
+\titleformat{\section}
+  {\color{DarkBlue}\large\bfseries\sffamily}
+  {\color{DarkBlue}\thesection.}{6pt}{}
+  [\color{NavyBlue}\titlerule]
+
+\titleformat{\subsection}
+  {\color{HeaderGray}\normalsize\bfseries\sffamily}
+  {\thesubsection.}{5pt}{}
+
+\titlespacing{\section}{0pt}{10pt}{4pt}
+\titlespacing{\subsection}{0pt}{6pt}{2pt}
+
+% ── List settings ─────────────────────────────────────────────────────────────
+\setlist[itemize]{leftmargin=1.2em, topsep=1pt, itemsep=0pt, parsep=0pt}
+\setlist[enumerate]{leftmargin=1.4em, topsep=1pt, itemsep=0pt, parsep=0pt}
+\newlist{checklist}{itemize}{1}
+\setlist[checklist]{label=$\square$, leftmargin=1.4em,
+  topsep=1pt, itemsep=1pt, parsep=0pt}
+
+% ── Header / footer ───────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{NavyBlue}\bfseries Applied Econometrics — Model Selection \& Diagnostic Checklist}
+\fancyhead[R]{\small\color{NavyBlue} University of Neuch\^{a}tel}
+\fancyfoot[C]{\small\color{gray}\thepage}
+\renewcommand{\headrulewidth}{0.6pt}
+\renewcommand{\headrule}{\color{NavyBlue}\hrule width\headwidth height\headrulewidth}
+
+% ── Hyperref ──────────────────────────────────────────────────────────────────
+\hypersetup{
+  colorlinks=true, linkcolor=NavyBlue, urlcolor=GreenTeal,
+  pdftitle={Applied Econometrics Reference Guide},
+  pdfauthor={University of Neuchatel}
+}
+
+% ── Helpers ───────────────────────────────────────────────────────────────────
+\newcommand{\pval}[1]{\textit{p}-value #1 0.05}
+\newcommand{\reject}{$\Rightarrow$ \textbf{reject H\textsubscript{0}}}
+\newcommand{\fail}{$\Rightarrow$ \textbf{fail to reject H\textsubscript{0}}}
+\newcommand{\pkg}[1]{\texttt{#1}}
+\newcommand{\fn}[1]{\texttt{#1}}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{document}
+% ══════════════════════════════════════════════════════════════════════════════
+
+% ── Title page ────────────────────────────────────────────────────────────────
+\begin{titlepage}
+\pagecolor{NavyBlue}
+\color{white}
+\vspace*{3cm}
+\begin{center}
+{\fontsize{28}{34}\selectfont\bfseries\sffamily Applied Econometrics}\\[0.5em]
+{\fontsize{18}{24}\selectfont\sffamily Model Selection \& Diagnostic Checklist}\\[1.5em]
+\textcolor{MedBlue}{\rule{12cm}{1pt}}\\[1.5em]
+{\large\sffamily A Practical Reference for Researchers}\\[0.5em]
+{\normalsize\sffamily\color{MedBlue}
+When to use each model $\cdot$ Key assumptions $\cdot$ Diagnostic tests\\
+Decision rules $\cdot$ Common pitfalls $\cdot$ Step-by-step checklists}
+\vfill
+{\large\sffamily University of Neuch\^{a}tel}\\[0.3em]
+{\normalsize\sffamily\color{MedBlue} Python for Econometrics Course}\\[0.3em]
+{\normalsize\sffamily\color{MedBlue} \today}
+\end{center}
+\end{titlepage}
+\nopagecolor
+
+% ── TOC ───────────────────────────────────────────────────────────────────────
+\tableofcontents
+\thispagestyle{fancy}
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════════
+% QUICK DECISION TREE
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Quick Model-Selection Decision Tree}
+
+\begin{tcolorbox}[colback=LightBlue,colframe=NavyBlue,arc=3pt,boxrule=0.8pt]
+\small
+\textbf{Step 1 — What is your data structure?}
+\begin{itemize}
+  \item Cross-sectional (one observation per unit) $\to$ Sections 2–7
+  \item Time series (one unit over time) $\to$ Sections 8–10
+  \item Panel (multiple units over time) $\to$ Section 11
+  \item Binary / limited outcome $\to$ Section 13
+\end{itemize}
+
+\textbf{Step 2 — Is the outcome continuous and unbounded?}\\
+Yes $\to$ OLS family. \quad No (binary/count/censored) $\to$ Section 13.
+
+\textbf{Step 3 — Is your key regressor endogenous?}\\
+Suspect endogeneity (OVB, measurement error, simultaneity)?  $\to$ Section 12 (IV/2SLS) or Section 14 (Treatment Effects).
+
+\textbf{Step 4 — Run OLS, then check diagnostics in order:}\\
+Multicollinearity (Sec.~3) $\to$ Heteroscedasticity (Sec.~4) $\to$
+Specification (Sec.~5) $\to$ Serial correlation if time series (Sec.~9) $\to$
+Stationarity if time series (Sec.~8, 10).
+\end{tcolorbox}
+
+\bigskip
+
+\begin{center}
+\footnotesize
+\begin{tabular}{lllll}
+\toprule
+\rowcolor{NavyBlue}\color{white}\textbf{Setting} &
+\color{white}\textbf{First choice} &
+\color{white}\textbf{If endogeneity} &
+\color{white}\textbf{If binary $Y$} &
+\color{white}\textbf{If non-stationary} \\
+\midrule
+Cross-section & OLS & IV / 2SLS & Logit / Probit & --- \\
+\rowcolor{RowGray}
+Time series & OLS + HAC & IV & --- & ARIMA / ECM \\
+Panel & FE / RE & FE + IV & --- & --- \\
+\rowcolor{RowGray}
+Program eval. & DiD / RDD & IV-LATE & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{OLS --- Simple \& Multiple Regression}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+
+\begin{tcolorbox}[when]
+\begin{itemize}
+  \item Continuous, unbounded dependent variable
+  \item Exploring linear relationships between variables
+  \item Baseline before testing for violations
+  \item Gauss--Markov conditions plausibly satisfied
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[key]
+\[
+\hat{\boldsymbol{\beta}} = (\mathbf{X}'\mathbf{X})^{-1}\mathbf{X}'\mathbf{y}
+\]
+\[
+\text{Var}(\hat{\boldsymbol{\beta}}) = \sigma^2(\mathbf{X}'\mathbf{X})^{-1}
+\]
+BLUE when MLR.1--MLR.5 hold (Gauss--Markov Theorem).
+\end{tcolorbox}
+
+\columnbreak
+
+\begin{tcolorbox}[watchout]
+\begin{itemize}
+  \item Omitted variable bias: $\text{Bias} = \beta_2 \cdot \delta_1$
+  \item Functional form misspecification (try logs, quadratics)
+  \item Influential outliers (check Cook's distance)
+  \item Extrapolation beyond data support
+  \item Interpreting $R^2$ as causal fit
+\end{itemize}
+\end{tcolorbox}
+
+\end{multicols}
+
+\begin{tcolorbox}[tests]
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Test} & \textbf{Null hypothesis} & \textbf{Decision} \\
+\midrule
+$t$-test & $H_0: \beta_j = 0$ & $|t| > t_{\alpha/2,n-k-1}$ \reject \\
+\rowcolor{RowGray}
+$F$-test (joint) & $H_0:$ all slope $\beta = 0$ & $F > F_{\alpha,k,n-k-1}$ \reject \\
+RESET test & $H_0:$ functional form OK & \pval{<} $\Rightarrow$ misspecification \\
+\rowcolor{RowGray}
+Partial $F$-test & $H_0:$ group of $\beta$s $= 0$ & $F > F_{\alpha,q,n-k-1}$ \reject \\
+\bottomrule
+\end{tabularx}
+\end{tcolorbox}
+
+\begin{tcolorbox}[checklist]
+\begin{multicols}{2}
+\begin{checklist}
+  \item State the population model explicitly
+  \item Check variable distributions (histograms)
+  \item Consider log transformation for skewed vars
+  \item Run OLS, inspect coefficients and signs
+  \item Check $R^2$ and adjusted $R^2$
+  \item Run RESET test for functional form
+  \item Inspect residual plot vs.\ fitted values
+  \item Run joint $F$-test for overall significance
+  \item Check for influential observations
+  \item Interpret coefficients as \textit{ceteris paribus}
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Multicollinearity}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+
+\begin{tcolorbox}[when]
+\begin{itemize}
+  \item After OLS, if SEs are large / signs unexpected
+  \item Multiple regressors that may be highly correlated
+  \item Model includes polynomial or interaction terms
+  \item Structural economic variables (income, wealth, consumption)
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[key]
+\[
+\text{VIF}_j = \frac{1}{1 - R^2_j}
+\]
+where $R^2_j$ = $R^2$ from regressing $x_j$ on all other regressors.\\
+Condition number: $\kappa = \sqrt{\lambda_{\max}/\lambda_{\min}}$
+\end{tcolorbox}
+
+\columnbreak
+
+\begin{tcolorbox}[watchout]
+\begin{itemize}
+  \item Inflated SEs $\to$ false non-significance
+  \item Coefficients sensitive to adding/dropping vars
+  \item Signs may flip relative to bivariate correlations
+  \item High $R^2$ with few significant $t$-tests
+  \item \textbf{Not a violation} of Gauss--Markov; OLS still BLUE
+\end{itemize}
+\end{tcolorbox}
+
+\end{multicols}
+
+\begin{tcolorbox}[tests]
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Indicator} & \textbf{What it measures} & \textbf{Threshold} \\
+\midrule
+VIF$_j$ & Variance inflation for $\hat\beta_j$ & $>10$ severe, $>5$ moderate \\
+\rowcolor{RowGray}
+Condition number $\kappa$ & Overall collinearity & $>30$ severe \\
+Pairwise $r$ & Simple correlation & $|r| > 0.8$ flag \\
+\rowcolor{RowGray}
+Eigenvalue ratio & Near-zero eigenvalues & $\lambda < 0.01$ flag \\
+\bottomrule
+\end{tabularx}
+\end{tcolorbox}
+
+\begin{tcolorbox}[checklist]
+\begin{multicols}{2}
+\begin{checklist}
+  \item Compute pairwise correlations of regressors
+  \item Compute VIF for each regressor
+  \item Check condition number of $\mathbf{X}'\mathbf{X}$
+  \item If VIF $>$ 10: consider dropping one variable
+  \item Consider combining correlated vars (index/PCA)
+  \item Try Ridge if prediction is the goal
+  \item Report VIFs in results table
+  \item Do not drop variables with theoretical justification
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Heteroscedasticity}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+
+\begin{tcolorbox}[when]
+\begin{itemize}
+  \item Cross-sectional data with varying unit sizes (firms, countries)
+  \item Income/expenditure data (variance rises with level)
+  \item After OLS, residuals show fan/funnel pattern
+  \item Any time you want valid inference from OLS
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[key]
+Heteroscedasticity-robust (HC1) SEs:
+\[
+\widehat{\text{Var}}_{\text{HC1}} = \frac{n}{n-k-1}(\mathbf{X}'\mathbf{X})^{-1}\!\left(\sum_i \hat{u}_i^2 \mathbf{x}_i\mathbf{x}_i'\right)\!(\mathbf{X}'\mathbf{X})^{-1}
+\]
+WLS: weight by $w_i = 1/\hat{\sigma}_i^2$.
+\end{tcolorbox}
+
+\columnbreak
+
+\begin{tcolorbox}[watchout]
+\begin{itemize}
+  \item OLS coefficients still unbiased, SEs wrong
+  \item $t$ and $F$ statistics invalid without correction
+  \item White test has low power in small samples
+  \item WLS requires correct variance specification
+  \item Always use robust SEs by default in cross-section
+\end{itemize}
+\end{tcolorbox}
+
+\end{multicols}
+
+\begin{tcolorbox}[tests]
+\begin{tabularx}{\linewidth}{lXll}
+\toprule
+\textbf{Test} & \textbf{$H_0$} & \textbf{Statistic} & \textbf{Decision} \\
+\midrule
+Breusch--Pagan & Homoscedastic & $nR^2 \sim \chi^2_k$ & $p < 0.05$ \reject \\
+\rowcolor{RowGray}
+White & Homoscedastic & $nR^2 \sim \chi^2_p$ & $p < 0.05$ \reject \\
+Goldfeld--Quandt & Homoscedastic & $F$-ratio of variances & $p < 0.05$ \reject \\
+\bottomrule
+\end{tabularx}
+\end{tcolorbox}
+
+\textbf{Remedy hierarchy:} (1) Use HC1/HC3 robust SEs $\to$ (2) WLS if variance structure known $\to$ (3) Log-transform $y$ if level variance rises with level.
+
+\begin{tcolorbox}[checklist]
+\begin{multicols}{2}
+\begin{checklist}
+  \item Plot residuals vs.\ fitted values
+  \item Plot $|\hat{u}|$ or $\hat{u}^2$ vs.\ each regressor
+  \item Run Breusch--Pagan test
+  \item Run White test (more general)
+  \item If tests reject: use \texttt{cov\_type='HC1'}
+  \item If variance structure known: use WLS
+  \item Compare OLS vs.\ robust SEs in table
+  \item Check if log-transform eliminates problem
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Model Specification \& Data Issues}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+
+\begin{tcolorbox}[when]
+\begin{itemize}
+  \item Always: before trusting OLS results
+  \item When theory suggests non-linear relationships
+  \item When proxy variables used (e.g., IQ for ability)
+  \item When measurement error in key regressor suspected
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[key]
+\textbf{Attenuation bias (measurement error):}
+\[
+\text{plim}(\hat\beta_1) = \beta_1 \cdot \frac{\sigma^2_{x^*}}{\sigma^2_{x^*} + \sigma^2_v}
+\]
+\textbf{RESET statistic:} Add $\hat{y}^2, \hat{y}^3$ to regression; test their joint significance.
+\end{tcolorbox}
+
+\columnbreak
+
+\begin{tcolorbox}[watchout]
+\begin{itemize}
+  \item Measurement error biases $\hat\beta$ toward zero
+  \item Non-linearity looks like heteroscedasticity
+  \item Proxy variables introduce attenuation
+  \item Outliers can drive OLS results in small samples
+  \item Missing variable vs.\ irrelevant variable trade-off
+\end{itemize}
+\end{tcolorbox}
+
+\end{multicols}
+
+\begin{tcolorbox}[checklist]
+\begin{multicols}{2}
+\begin{checklist}
+  \item Run RESET test ($p < 0.05 \to$ misspecification)
+  \item Try log, squared, interaction terms if RESET fails
+  \item Check for outliers; run model with and without
+  \item Document proxy variable limitations
+  \item If meas.\ error: consider IV for the mismeasured var
+  \item Davidson--MacKinnon $J$-test for non-nested models
+  \item Report AIC / BIC for model comparison
+  \item Keep all theoretically justified variables
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Qualitative Regressors \& Interaction Effects}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+
+\begin{tcolorbox}[when]
+\begin{itemize}
+  \item Categorical variables (gender, region, industry)
+  \item Testing if slopes differ across groups
+  \item Policy variables (treatment/control indicators)
+  \item Chow test for structural stability
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[key]
+\textbf{Dummy variable trap:} include $G-1$ dummies for $G$ categories.\\[4pt]
+\textbf{Interaction:} $y = \beta_0 + \beta_1 d + \beta_2 x + \beta_3 d \cdot x + u$\\
+$\beta_3$ = difference in slope between groups.\\[4pt]
+\textbf{Chow test:} $F = \frac{(RSS_R - RSS_U)/k}{RSS_U/(n - 2k)}$
+\end{tcolorbox}
+
+\columnbreak
+
+\begin{tcolorbox}[watchout]
+\begin{itemize}
+  \item Always omit one category (base group)
+  \item Interaction terms amplify multicollinearity
+  \item Centre continuous vars before interacting
+  \item Chow test assumes homoscedasticity
+  \item Saturated models with many dummies: overfit risk
+\end{itemize}
+\end{tcolorbox}
+
+\end{multicols}
+
+\begin{tcolorbox}[checklist]
+\begin{multicols}{2}
+\begin{checklist}
+  \item Choose interpretable base/reference category
+  \item Include $G-1$ dummies; verify no perfect collinearity
+  \item Test significance of dummy coefficient
+  \item Test interaction term if slopes may differ
+  \item Chow test if structural break suspected
+  \item Report marginal effect at meaningful base group
+  \item Plot fitted values by group for visual check
+  \item Label coefficients clearly in output
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Endogeneity \& Instrumental Variables}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+
+\begin{tcolorbox}[when]
+\begin{itemize}
+  \item OVB suspected (ability, motivation, quality)
+  \item Simultaneity (supply/demand, wages/education)
+  \item Measurement error in key regressor
+  \item Natural experiment or policy instrument available
+  \item Durbin--Wu--Hausman test rejects exogeneity
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[key]
+\textbf{OVB formula:} $\text{plim}(\tilde\beta_1) = \beta_1 + \beta_2 \delta_1$\\
+where $\delta_1 = \text{Cov}(x_2, x_1)/\text{Var}(x_1)$.\\[4pt]
+\textbf{2SLS estimator:}
+\[
+\hat{\boldsymbol\beta}_{2SLS} = (\hat{\mathbf{X}}'\mathbf{X})^{-1}\hat{\mathbf{X}}'\mathbf{y}
+\]
+\textbf{First stage:} $x = \pi_0 + \pi_1 z + v$, need $\pi_1 \neq 0$.
+\end{tcolorbox}
+
+\columnbreak
+
+\begin{tcolorbox}[watchout]
+\begin{itemize}
+  \item Weak instruments ($F_{\text{1st stage}} < 10$) inflate 2SLS bias
+  \item Instrument must be exogenous (untestable with one IV)
+  \item 2SLS SEs larger than OLS by construction
+  \item Overidentification: test exclusion with Sargan/Hansen
+  \item LATE $\neq$ ATE: IV estimates effect for compliers only
+  \item 2SLS inconsistent if instrument invalid
+\end{itemize}
+\end{tcolorbox}
+
+\end{multicols}
+
+\begin{tcolorbox}[tests]
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Test} & \textbf{Purpose} & \textbf{Decision} \\
+\midrule
+First-stage $F$ & Instrument strength & $F > 10$ (Stock--Yogo rule) \\
+\rowcolor{RowGray}
+Durbin--Wu--Hausman & Endogeneity of regressor & $p < 0.05 \Rightarrow$ use IV \\
+Sargan/Hansen $J$ & Overidentification (validity) & $p < 0.05 \Rightarrow$ suspect IV \\
+\rowcolor{RowGray}
+Partial $R^2$ (1st stage) & Instrument relevance & Higher is better \\
+\bottomrule
+\end{tabularx}
+\end{tcolorbox}
+
+\begin{tcolorbox}[checklist]
+\begin{multicols}{2}
+\begin{checklist}
+  \item State economic argument for endogeneity
+  \item Identify candidate instruments (theory-based)
+  \item Check instrument relevance: 1st-stage $F > 10$
+  \item Argue instrument exogeneity (no direct effect on $y$)
+  \item Run Durbin--Wu--Hausman test (compare OLS vs 2SLS)
+  \item If $>1$ instrument: run Sargan/Hansen $J$-test
+  \item Report both OLS and 2SLS side by side
+  \item Interpret 2SLS as LATE if instrument is binary
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Panel Data: Fixed Effects, Random Effects \& First Differences}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+
+\begin{tcolorbox}[when]
+\begin{itemize}
+  \item Data: multiple units observed over multiple periods
+  \item Control for unobserved unit-level heterogeneity
+  \item FE: if unobserved effect correlated with regressors
+  \item RE: if unobserved effect uncorrelated (efficiency gain)
+  \item FD: if $T = 2$ or non-stationary panel
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[key]
+\textbf{FE (within estimator):} demean all variables:\\
+$\ddot{y}_{it} = \ddot{\mathbf{x}}_{it}\boldsymbol\beta + \ddot{u}_{it}$\\[4pt]
+\textbf{RE:} GLS with $\lambda = 1 - \sigma_u/\sqrt{\sigma_u^2 + T\sigma_a^2}$\\[4pt]
+\textbf{FD:} $\Delta y_{it} = \Delta\mathbf{x}_{it}\boldsymbol\beta + \Delta u_{it}$
+\end{tcolorbox}
+
+\columnbreak
+
+\begin{tcolorbox}[watchout]
+\begin{itemize}
+  \item FE removes all time-invariant variables (including gender, race)
+  \item FE amplifies attenuation bias from meas.\ error
+  \item RE inconsistent if $\text{Cov}(a_i, x_{it}) \neq 0$
+  \item Cluster SEs by unit if serial correlation in $u_{it}$
+  \item FD loses one time period; FE more efficient with $T > 2$
+  \item Time dummies needed to control aggregate shocks
+\end{itemize}
+\end{tcolorbox}
+
+\end{multicols}
+
+\begin{tcolorbox}[tests]
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Test} & \textbf{$H_0$} & \textbf{Decision} \\
+\midrule
+Hausman test & RE consistent ($\alpha_i \perp x_{it}$) & $p < 0.05 \Rightarrow$ use FE \\
+\rowcolor{RowGray}
+F-test for FE & All $\alpha_i = 0$ (pooled OLS OK) & $p < 0.05 \Rightarrow$ use FE \\
+Breusch--Pagan LM & Var($\alpha_i$) $= 0$ (pooled OK) & $p < 0.05 \Rightarrow$ use RE \\
+\rowcolor{RowGray}
+Serial corr.\ (Wooldridge) & No AR(1) in $u_{it}$ & $p < 0.05 \Rightarrow$ cluster SEs \\
+\bottomrule
+\end{tabularx}
+\end{tcolorbox}
+
+\begin{tcolorbox}[checklist]
+\begin{multicols}{2}
+\begin{checklist}
+  \item Identify panel structure: balanced or unbalanced?
+  \item Run pooled OLS as baseline
+  \item Run Breusch--Pagan LM test (pool vs RE)
+  \item Run FE and RE; save both sets of estimates
+  \item Run Hausman test: $p < 0.05 \to$ FE
+  \item Add time dummies (test jointly with $F$-test)
+  \item Cluster SEs by unit (panel robust)
+  \item FE cannot identify time-invariant vars: plan accordingly
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Stationary Time Series}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+
+\begin{tcolorbox}[when]
+\begin{itemize}
+  \item Confirmed stationary series (ADF rejects unit root)
+  \item Forecasting or modelling dynamic relationships
+  \item Distributed lag models (PDL, ADL)
+  \item Causal analysis between time series
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[key]
+\textbf{ADL($p$,$q$)} model:\\
+$y_t = \alpha + \sum_{j=1}^p \rho_j y_{t-j} + \sum_{s=0}^q \delta_s x_{t-s} + u_t$\\[4pt]
+\textbf{Long-run multiplier:} $\frac{\sum \delta_s}{1 - \sum \rho_j}$\\[4pt]
+\textbf{HAC (Newey--West) SEs} correct for serial correlation.
+\end{tcolorbox}
+
+\columnbreak
+
+\begin{tcolorbox}[watchout]
+\begin{itemize}
+  \item Trend-stationary vs.\ difference-stationary: different treatment
+  \item Seasonality: add seasonal dummies or use seasonal differencing
+  \item Spurious regression if levels used on I(1) series
+  \item Lag selection: AIC/BIC; don't over-fit
+  \item Structural breaks violate stationarity assumption
+  \item Granger causality $\neq$ economic causality
+\end{itemize}
+\end{tcolorbox}
+
+\end{multicols}
+
+\begin{tcolorbox}[checklist]
+\begin{multicols}{2}
+\begin{checklist}
+  \item Plot time series; look for trend, seasonality
+  \item Run ADF test (with and without trend)
+  \item If I(0): proceed with levels
+  \item Include trend/seasonal dummies if needed
+  \item Select lag length via AIC or BIC
+  \item Use Newey--West (HAC) SEs for inference
+  \item Check residuals for remaining autocorrelation (BG)
+  \item Granger causality test if dynamic relationship of interest
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Serial Correlation}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+
+\begin{tcolorbox}[when]
+\begin{itemize}
+  \item Time series or panel data residuals
+  \item OLS residuals show pattern (ACF plot, DW $\neq 2$)
+  \item Dynamically misspecified model
+  \item Economic data with inertia (GDP, unemployment)
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[key]
+\textbf{AR(1):} $u_t = \rho u_{t-1} + e_t,\; |\rho| < 1$\\[4pt]
+\textbf{DW statistic:} $DW \approx 2(1-\hat\rho)$\\
+$DW \approx 2$: no autocorrelation\\[4pt]
+\textbf{Cochrane--Orcutt:} transform by $y_t - \hat\rho y_{t-1}$ and re-estimate.
+\end{tcolorbox}
+
+\columnbreak
+
+\begin{tcolorbox}[watchout]
+\begin{itemize}
+  \item OLS unbiased but inefficient; SEs biased downward
+  \item DW test invalid with lagged $y$ as regressor (use BG)
+  \item Serial correlation often symptom of omitted dynamics
+  \item First fix: add lagged $y$ or lagged $x$ before using HAC
+  \item In panels: cluster SEs by unit and period
+\end{itemize}
+\end{tcolorbox}
+
+\end{multicols}
+
+\begin{tcolorbox}[tests]
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Test} & \textbf{$H_0$} & \textbf{Decision} \\
+\midrule
+Durbin--Watson & $\rho = 0$ (no AR(1)) & $DW < d_L$ \reject; avoid if lagged $y$ \\
+\rowcolor{RowGray}
+Breusch--Godfrey & $H_0$: no AR($p$) & $p < 0.05$ \reject \\
+ACF/PACF plot & Visual check & Spikes outside $\pm 1.96/\sqrt{T}$ \\
+\rowcolor{RowGray}
+Ljung--Box $Q$ & No autocorrelation to lag $h$ & $p < 0.05$ \reject \\
+\bottomrule
+\end{tabularx}
+\end{tcolorbox}
+
+\begin{tcolorbox}[checklist]
+\begin{multicols}{2}
+\begin{checklist}
+  \item Plot ACF and PACF of residuals
+  \item Run Breusch--Godfrey test (BG, lag 1 and 4)
+  \item If dynamic model: BG preferred over DW
+  \item First remedy: add dynamic terms (lags)
+  \item If persist: use Newey--West HAC SEs (\texttt{cov\_type='HAC'})
+  \item Cochrane--Orcutt for GLS if AR(1) confirmed
+  \item After remedy: re-run BG to verify
+  \item Never use DW with lagged dependent variable
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Non-Stationary Time Series: Unit Roots \& Cointegration}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+
+\begin{tcolorbox}[when]
+\begin{itemize}
+  \item ADF fails to reject unit root (series is I(1))
+  \item Macro series: GDP, prices, exchange rates
+  \item Long-run equilibrium relationship between I(1) series
+  \item Error correction model for short-run adjustment
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[key]
+\textbf{ADF} regression:\\
+$\Delta y_t = \alpha + \beta t + \gamma y_{t-1} + \sum_{j=1}^p \delta_j \Delta y_{t-j} + u_t$\\
+$H_0$: $\gamma = 0$ (unit root).\\[4pt]
+\textbf{ECM:} $\Delta y_t = \alpha + \lambda \hat{e}_{t-1} + \beta \Delta x_t + u_t$\\
+$\hat\lambda < 0$: error correction toward equilibrium.
+\end{tcolorbox}
+
+\columnbreak
+
+\begin{tcolorbox}[watchout]
+\begin{itemize}
+  \item Spurious regression: high $R^2$, low DW with I(1) series
+  \item First-differencing removes long-run information
+  \item Cointegration required before ECM is valid
+  \item ADF has low power in small samples (PP test as check)
+  \item Include intercept/trend in ADF based on data plot
+  \item Johansen for multivariate cointegration
+\end{itemize}
+\end{tcolorbox}
+
+\end{multicols}
+
+\begin{tcolorbox}[tests]
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Test} & \textbf{$H_0$} & \textbf{Decision} \\
+\midrule
+ADF & Unit root ($\gamma = 0$) & $p < 0.05 \Rightarrow$ stationary \\
+\rowcolor{RowGray}
+Phillips--Perron & Unit root (non-parametric) & $p < 0.05 \Rightarrow$ stationary \\
+Engle--Granger & No cointegration (resid I(1)) & $p < 0.05 \Rightarrow$ cointegrated \\
+\rowcolor{RowGray}
+Johansen trace & $\leq r$ cointegrating vecs & Reject if stat $>$ critical value \\
+\bottomrule
+\end{tabularx}
+\end{tcolorbox}
+
+\begin{tcolorbox}[checklist]
+\begin{multicols}{2}
+\begin{checklist}
+  \item Plot each series; visual check for trend/drift
+  \item Run ADF (with constant and with trend)
+  \item Also run PP test as robustness check
+  \item If I(1): check cointegration (Engle--Granger or Johansen)
+  \item If cointegrated: estimate ECM; verify $\hat\lambda < 0$
+  \item If not cointegrated: work in first differences
+  \item Report DW in levels regression (near 0 = spurious)
+  \item Never regress I(1) on I(1) without checking cointegration
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Difference-in-Differences \& Pooled Cross-Sections}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+
+\begin{tcolorbox}[when]
+\begin{itemize}
+  \item Natural experiment: policy affects one group, not another
+  \item Pre- and post-treatment observations available
+  \item Treatment assignment not random but parallel trends plausible
+  \item Pooled cross-sections: repeated surveys (not panel)
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[key]
+\[
+\hat\delta_{\text{DiD}} = (\bar y_{T,\text{after}} - \bar y_{T,\text{before}}) - (\bar y_{C,\text{after}} - \bar y_{C,\text{before}})
+\]
+Regression form:\\
+$y = \beta_0 + \beta_1 D_{\text{treat}} + \beta_2 D_{\text{post}} + \delta D_{\text{treat}} \cdot D_{\text{post}} + u$\\
+$\delta$ = ATT under parallel trends.
+\end{tcolorbox}
+
+\columnbreak
+
+\begin{tcolorbox}[watchout]
+\begin{itemize}
+  \item Parallel trends is \textbf{untestable} post-treatment (test pre-trends)
+  \item Spillover effects violate SUTVA
+  \item Staggered adoption: use Callaway--Sant'Anna, not simple DiD
+  \item Always cluster SEs at group (treated/control) level
+  \item Anticipation effects can bias DiD
+  \item Event study plots: check pre-trend coefficients near zero
+\end{itemize}
+\end{tcolorbox}
+
+\end{multicols}
+
+\begin{tcolorbox}[checklist]
+\begin{multicols}{2}
+\begin{checklist}
+  \item Plot parallel trends in pre-period (visual + event study)
+  \item Define treatment/control groups clearly
+  \item Verify no anticipation effects before treatment
+  \item Run full DiD regression with interaction term
+  \item Cluster SEs by group or state
+  \item Add controls to improve precision (not for identification)
+  \item Check heterogeneous treatment effects
+  \item If staggered: use modern DiD estimator
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Treatment Effects \& Causal Inference}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+
+\begin{tcolorbox}[when]
+\begin{itemize}
+  \item Estimating causal effect of program/policy/treatment
+  \item RCT: randomised control trial available
+  \item DiD: quasi-experiment with parallel trends
+  \item RDD: assignment determined by threshold rule
+  \item PSM: observational data, selection on observables
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[key]
+\textbf{Potential outcomes:} $Y_i = D_i Y_i(1) + (1-D_i) Y_i(0)$\\[3pt]
+$\text{ATE} = E[Y(1) - Y(0)]$\\
+$\text{ATT} = E[Y(1) - Y(0) \mid D=1]$\\
+$\text{LATE} = \frac{\text{Reduced form}}{\text{First stage}}$ (IV for compliers)\\[3pt]
+\textbf{Naive bias:} $\hat\tau_{\text{naive}} = \text{ATT} + \underbrace{E[Y(0)\mid D\!=\!1] - E[Y(0)\mid D\!=\!0]}_{\text{selection bias}}$
+\end{tcolorbox}
+
+\columnbreak
+
+\begin{tcolorbox}[watchout]
+\begin{itemize}
+  \item RCT: OLS on indicator gives ATE unbiasedly
+  \item PSM: only controls for \textit{observed} confounders
+  \item RDD: local estimate near threshold; check manipulation
+  \item LATE $\neq$ ATE unless instrument affects all units (strong)
+  \item Always report which estimand (ATE/ATT/LATE) you target
+  \item Large bandwidth in RDD: more data, more bias
+  \item Common support must hold for PSM (check overlap)
+\end{itemize}
+\end{tcolorbox}
+
+\end{multicols}
+
+\begin{tcolorbox}[tests]
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Test / Check} & \textbf{Purpose} & \textbf{Decision} \\
+\midrule
+Balance table & Covariate balance post-randomisation & All $p > 0.05$ \\
+\rowcolor{RowGray}
+McCrary density test & No manipulation at RDD cutoff & $p > 0.05$ OK \\
+Propensity overlap plot & Common support for PSM & Check visually \\
+\rowcolor{RowGray}
+Placebo cutoff (RDD) & No effect away from threshold & $p > 0.05$ OK \\
+Pre-trend test (DiD) & Parallel pre-trends & Coeff near 0 \\
+\bottomrule
+\end{tabularx}
+\end{tcolorbox}
+
+\begin{tcolorbox}[checklist]
+\begin{multicols}{2}
+\begin{checklist}
+  \item State causal question and target estimand (ATE/ATT/LATE)
+  \item Choose identification strategy based on data structure
+  \item RCT: verify randomisation (balance table)
+  \item DiD: test parallel pre-trends (event study)
+  \item RDD: McCrary test; vary bandwidth; placebo cutoff
+  \item PSM: estimate propensity score; check overlap
+  \item IV/LATE: 1st-stage $F > 10$; instrument exogeneity
+  \item Report estimand, sample, and assumptions explicitly
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Limited Dependent Variables: Logit, Probit \& Tobit}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+
+\begin{tcolorbox}[when]
+\begin{itemize}
+  \item \textbf{Logit/Probit:} binary outcome $y \in \{0,1\}$
+  \item \textbf{Tobit:} censored/truncated outcome ($y \geq 0$, many zeros)
+  \item \textbf{Ordered Probit:} ordinal outcome (Likert scales)
+  \item \textbf{Multinomial Logit:} unordered multiple categories
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[key]
+\textbf{Logit:} $P(y=1|\mathbf{x}) = \Lambda(\mathbf{x}\boldsymbol\beta) = \frac{e^{\mathbf{x}\boldsymbol\beta}}{1+e^{\mathbf{x}\boldsymbol\beta}}$\\[4pt]
+\textbf{Marginal effect (AME):} $\frac{\partial P}{\partial x_j} = \hat\beta_j \cdot \bar{\lambda}$\\
+where $\bar\lambda = $ avg.\ density evaluated at $\hat{\mathbf{x}}\hat{\boldsymbol{\beta}}$.\\[4pt]
+\textbf{Probit:} $\Phi$ replaces $\Lambda$; coefficients $\approx \beta_{\text{logit}}/1.6$.
+\end{tcolorbox}
+
+\columnbreak
+
+\begin{tcolorbox}[watchout]
+\begin{itemize}
+  \item LPM (OLS on binary $y$): predicted probs outside [0,1]
+  \item Logit/Probit coefficients: direction only, not magnitude
+  \item Always compute and report marginal effects (AME/MEM)
+  \item Pseudo-$R^2$ (McFadden) not comparable to OLS $R^2$
+  \item Tobit assumes normality; check with residual plots
+  \item Perfect separation (predictor fully determines $y$): MLE fails
+\end{itemize}
+\end{tcolorbox}
+
+\end{multicols}
+
+\begin{tcolorbox}[tests]
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Test} & \textbf{Purpose} & \textbf{Decision} \\
+\midrule
+LR test & Joint significance of regressors & $p < 0.05$ \reject \\
+\rowcolor{RowGray}
+Hosmer--Lemeshow & Goodness of fit (calibration) & $p > 0.05$ good fit \\
+Wald test & Individual coefficient $= 0$ & $p < 0.05$ significant \\
+\rowcolor{RowGray}
+AUC / ROC & Discrimination ability & $> 0.7$ acceptable \\
+Vuong test & Logit vs.\ Probit model choice & Significant $\to$ prefer one \\
+\bottomrule
+\end{tabularx}
+\end{tcolorbox}
+
+\begin{tcolorbox}[checklist]
+\begin{multicols}{2}
+\begin{checklist}
+  \item Confirm $y$ is binary/limited before logit/probit
+  \item Estimate logit and probit; compare signs/significance
+  \item Always compute Average Marginal Effects (AME)
+  \item Report pseudo-$R^2$ and classification accuracy
+  \item Check for perfect or quasi-separation
+  \item Hosmer--Lemeshow test for calibration
+  \item Plot ROC curve and report AUC
+  \item Do not report raw logit/probit coefficients as effects
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Advanced Time Series: ARIMA, VAR \& Granger Causality}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+
+\begin{tcolorbox}[when]
+\begin{itemize}
+  \item Univariate forecasting with autocorrelated errors: ARIMA
+  \item System of mutually dependent time series: VAR
+  \item Testing predictive causality between series: Granger
+  \item Impulse response analysis for policy simulations
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[key]
+\textbf{ARMA($p$,$q$):} $y_t = \sum_{j=1}^p \phi_j y_{t-j} + \varepsilon_t + \sum_{i=1}^q \theta_i \varepsilon_{t-i}$\\[4pt]
+\textbf{VAR($p$):} $\mathbf{y}_t = \mathbf{A}_1\mathbf{y}_{t-1} + \cdots + \mathbf{A}_p\mathbf{y}_{t-p} + \mathbf{u}_t$\\[4pt]
+\textbf{Granger:} $x$ Granger-causes $y$ if lags of $x$ jointly significant in VAR.
+\end{tcolorbox}
+
+\columnbreak
+
+\begin{tcolorbox}[watchout]
+\begin{itemize}
+  \item ARIMA requires stationarity first (difference if I(1))
+  \item Model identification: ACF/PACF, then AIC/BIC
+  \item VAR: all series must be stationary (or use VECM if cointegrated)
+  \item Granger causality is predictive, not structural causality
+  \item Impulse responses depend on Cholesky ordering (economic theory)
+  \item Over-parameterised VAR: reduce lag length; LASSO-VAR for large systems
+\end{itemize}
+\end{tcolorbox}
+
+\end{multicols}
+
+\begin{tcolorbox}[checklist]
+\begin{multicols}{2}
+\begin{checklist}
+  \item Confirm stationarity (ADF) before ARMA/VAR
+  \item Inspect ACF/PACF for $p$, $q$ guidance
+  \item Estimate candidate ARIMA models; compare AIC/BIC
+  \item Check residuals: Ljung--Box test, ACF of residuals
+  \item VAR: select lag by AIC/BIC/HQ criteria
+  \item Test residuals for autocorrelation (Portmanteau)
+  \item Granger causality: Wald test on lag block
+  \item Report impulse responses with confidence bands
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Simultaneous Equations Models}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+
+\begin{tcolorbox}[when]
+\begin{itemize}
+  \item Endogenous variables determined jointly (supply \& demand)
+  \item Each equation has a causal interpretation
+  \item IV/2SLS is insufficient (multiple endogenous vars)
+  \item Macro structural models; wage--employment systems
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[key]
+\textbf{Order condition (necessary):}\\
+\# excluded exogenous $\geq$ \# endogenous regressors.\\[4pt]
+\textbf{Rank condition (sufficient):} rank of restricted coefficient matrix $= G-1$.\\[4pt]
+\textbf{2SLS} equation by equation; \textbf{3SLS} for system efficiency.
+\end{tcolorbox}
+
+\columnbreak
+
+\begin{tcolorbox}[watchout]
+\begin{itemize}
+  \item Under-identified equation: cannot be estimated
+  \item OLS on structural equation is inconsistent
+  \item Just-identified: 2SLS $=$ IV; over-identified: test with $J$-test
+  \item 3SLS more efficient but inconsistency spreads across equations
+  \item Normalisation rule: assign one variable as LHS per equation
+\end{itemize}
+\end{tcolorbox}
+
+\end{multicols}
+
+\begin{tcolorbox}[checklist]
+\begin{multicols}{2}
+\begin{checklist}
+  \item Write structural form explicitly (each equation)
+  \item Check order condition for each equation
+  \item Verify rank condition before estimation
+  \item List all exogenous/excluded variables
+  \item Estimate each equation by 2SLS
+  \item Sargan test for over-identified equations
+  \item Compare 2SLS vs.\ OLS to gauge endogeneity bias
+  \item Consider 3SLS if system efficiency matters
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Diagnostics at a Glance --- Master Reference Table}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\small
+\begin{tabularx}{\linewidth}{llXll}
+\toprule
+\rowcolor{NavyBlue}
+\color{white}\textbf{Problem} &
+\color{white}\textbf{Test} &
+\color{white}\textbf{$H_0$} &
+\color{white}\textbf{Stat} &
+\color{white}\textbf{Remedy} \\
+\midrule
+Heteroscedasticity & Breusch--Pagan & Homoscedastic & $\chi^2$ & HC1 robust SEs \\
+\rowcolor{RowGray}
+Heteroscedasticity & White & Homoscedastic & $\chi^2$ & HC1 robust SEs \\
+Serial correlation & Breusch--Godfrey & No AR($p$) & $F$ / $\chi^2$ & HAC / C--O \\
+\rowcolor{RowGray}
+Serial correlation & Durbin--Watson & No AR(1) & $DW$ & Add lags / HAC \\
+Multicollinearity & VIF & --- & $>10$ & Drop / PCA / Ridge \\
+\rowcolor{RowGray}
+Multicollinearity & Condition $\kappa$ & --- & $>30$ & Same as above \\
+Misspecification & RESET & Correct form & $F$ & Add nonlinear terms \\
+\rowcolor{RowGray}
+Unit root & ADF & Unit root & $t$ & Difference / ECM \\
+No cointegration & Engle--Granger & Not cointegrated & $t$ & First differences \\
+\rowcolor{RowGray}
+Endogeneity & Wu--Hausman & Exogenous & $\chi^2$ / $F$ & 2SLS \\
+Weak instrument & 1st-stage $F$ & Strong instrument & $F < 10$ & Find better IV \\
+\rowcolor{RowGray}
+Overidentification & Sargan/Hansen & Valid instruments & $\chi^2$ & Check instruments \\
+Panel: RE vs FE & Hausman & RE consistent & $\chi^2$ & FE if $p < 0.05$ \\
+\rowcolor{RowGray}
+Structural break & Chow & No break & $F$ & Split sample / dummies \\
+Normality & Jarque--Bera & Normal residuals & $\chi^2_2$ & Check outliers \\
+\bottomrule
+\end{tabularx}
+
+\normalsize
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Model Assumptions Summary}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{center}
+\small
+\begin{tabularx}{\linewidth}{lXXl}
+\toprule
+\rowcolor{NavyBlue}
+\color{white}\textbf{Assumption} &
+\color{white}\textbf{OLS (cross-section)} &
+\color{white}\textbf{Time Series OLS} &
+\color{white}\textbf{Violated by} \\
+\midrule
+MLR.1 & Linear in parameters & TS.1 Same & Misspecification \\
+\rowcolor{RowGray}
+MLR.2 & Random sample & TS.2 Weak dependence & Non-random, $I(1)$ \\
+MLR.3 & No perfect collinearity & TS.3 Same & Dummy trap \\
+\rowcolor{RowGray}
+MLR.4 & Zero conditional mean & TS.4 Strict exogeneity & Endogeneity, OVB \\
+MLR.5 & Homoscedasticity & TS.5 Same & Heteroscedasticity \\
+\rowcolor{RowGray}
+MLR.6 & Normality of $u$ & TS.6 Same & Outliers, small $n$ \\
+(Panel) FE.1 & Strict exogeneity given $a_i$ & --- & Lagged dep.\ var.\ in FE \\
+\rowcolor{RowGray}
+(IV) IV.1 & Instrument relevance: $\pi_1 \neq 0$ & --- & Weak instruments \\
+(IV) IV.2 & Instrument exogeneity: $\text{Cov}(z,u)=0$ & --- & Invalid instrument \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{The Researcher's Pre-Submission Checklist}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{tcolorbox}[colback=LightBlue, colframe=NavyBlue, arc=3pt, boxrule=0.8pt,
+  title={\bfseries\color{white} Before You Submit: Run Through All of These}, fonttitle=\small]
+\begin{multicols}{2}
+\textbf{Data \& Design}
+\begin{checklist}
+  \item Document data source and time period
+  \item Check for missing values and their pattern
+  \item Report sample size and key descriptive stats
+  \item State identification strategy clearly
+  \item Confirm exogeneity of key regressors
+\end{checklist}
+
+\textbf{OLS Baseline}
+\begin{checklist}
+  \item Run baseline OLS with full controls
+  \item Run RESET test (functional form)
+  \item Report robust (HC1) SEs alongside OLS SEs
+  \item Check $R^2$, adjusted $R^2$, AIC/BIC
+  \item Plot residuals vs.\ fitted values
+\end{checklist}
+
+\columnbreak
+
+\textbf{Diagnostic Tests}
+\begin{checklist}
+  \item Breusch--Pagan and White (heteroscedasticity)
+  \item Breusch--Godfrey if time series / panel
+  \item VIF for each regressor
+  \item ADF if time series data
+  \item Hausman if panel data
+\end{checklist}
+
+\textbf{Robustness \& Reporting}
+\begin{checklist}
+  \item Run model on subsamples / alternative specs
+  \item Report placebo / falsification tests
+  \item Show main table with multiple specifications
+  \item Discuss direction and magnitude of violations
+  \item State which assumptions cannot be tested
+\end{checklist}
+\end{multicols}
+\end{tcolorbox}
+
+\vspace{1em}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Quick Python / statsmodels Reference}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\rowcolor{NavyBlue}
+\color{white}\textbf{Task} & \color{white}\textbf{Python snippet} \\
+\midrule
+OLS & \texttt{smf.ols('y \textasciitilde{} x1 + x2', data=df).fit()} \\
+\rowcolor{RowGray}
+Robust SEs & \texttt{res.get\_robustcov\_results(cov\_type='HC1')} \\
+HAC SEs & \texttt{res.get\_robustcov\_results(cov\_type='HAC', maxlags=4)} \\
+\rowcolor{RowGray}
+Breusch--Pagan & \texttt{het\_breuschpagan(res.resid, res.model.exog)} \\
+White test & \texttt{het\_white(res.resid, res.model.exog)} \\
+\rowcolor{RowGray}
+Breusch--Godfrey & \texttt{acorr\_breusch\_godfrey(res, nlags=4)} \\
+ADF test & \texttt{adfuller(series, autolag='AIC')} \\
+\rowcolor{RowGray}
+VIF & \texttt{1 / (1 - smf.ols(f'\{x\} \textasciitilde{} ...').fit().rsquared)} \\
+2SLS & \texttt{IV2SLS.from\_formula('y \textasciitilde{} 1 + [x \textasciitilde{} z]', data=df).fit()} \\
+\rowcolor{RowGray}
+FE panel & \texttt{PanelOLS.from\_formula('y \textasciitilde{} x + EntityEffects', data=pdata).fit()} \\
+Hausman & \texttt{compare(fe\_res, re\_res)} from \texttt{linearmodels} \\
+\rowcolor{RowGray}
+Logit AME & \texttt{logit\_res.get\_margeff().summary()} \\
+ARIMA & \texttt{ARIMA(y, order=(p,d,q)).fit()} \\
+\rowcolor{RowGray}
+Granger & \texttt{grangercausalitytests(data[['y','x']], maxlag=4)} \\
+\bottomrule
+\end{tabularx}
+
+\normalsize
+
+\vfill
+\begin{center}
+\small\color{gray}
+University of Neuch\^{a}tel --- Python for Econometrics Course\\
+This document is a teaching aid and does not replace primary textbooks.\\
+Wooldridge (2019) \textit{Introductory Econometrics} $\cdot$
+Angrist \& Pischke (2009) \textit{Mostly Harmless Econometrics}
+\end{center}
+
+\end{document}
